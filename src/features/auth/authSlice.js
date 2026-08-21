@@ -65,11 +65,12 @@ export const registerUser = createAsyncThunk(
 export const updateUser = createAsyncThunk(
     'auth/updateUser',
 
-    async ({ id, name, email, phone }) => {
+    async ({ id, name, email, phone, profilePicture }) => {
         const response = await api.patch(`/users/${id}`, {
             name,
             email,
-            phone
+            phone,
+            profilePicture
         });
 
         return response.data;
