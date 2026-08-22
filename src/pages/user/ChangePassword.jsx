@@ -1,86 +1,155 @@
 import { useState } from 'react';
+
 import { useDispatch, useSelector } from 'react-redux';
+
 import { Link, useNavigate } from 'react-router-dom';
+
 import { changePassword } from '../../features/auth/authSlice';
 
 function ChangePassword() {
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const {currentUser, loading} = useSelector(state => state.auth);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-  function handleSubmit(e){
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+    const { currentUser, loading } = useSelector(
+        (state) => state.auth
+    );
 
-    if(newPassword !== confirmPassword){
-      setError("Passwords do not match");
-      return;
+    function handleSubmit(e) {
+        e.preventDefault();
+
+        setError('');
+        setSuccess('');
+
+        if (newPassword !== confirmPassword) {
+            setError('Passwords do not match');
+            return;
+        }
+
+        if (currentPassword !== currentUser.password) {
+            setError('Current password is incorrect');
+            return;
+        }
+
+        dispatch(
+            changePassword({
+                id: currentUser.id,
+                password: newPassword
+            })
+        )
+            .unwrap()
+            .then(() => {
+                setCurrentPassword('');
+                setNewPassword('');
+                setConfirmPassword('');
+
+                setSuccess('Password changed successfully');
+
+                setTimeout(() => navigate('/account'), 700);
+            });
     }
-    if(currentPassword !== currentUser.password){
-      setError('Current Password is Incorrect');
-      return;
-    }
 
-    dispatch(changePassword({
-      id: currentUser.id,
-      password: newPassword
-    }))
-      .unwrap()
-      .then(() => {
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
-        setSuccess('Password changed successfully');
-        setTimeout(() => navigate('/account'), 700);
-      });
-    
+    return (
+        <main className="min-h-[calc(100svh-73px)] bg-black px-4 py-8">
+            <section className="mx-auto w-full max-w-xl rounded-2xl border border-gray-700 bg-[#1A1A19] p-6 shadow-xl sm:p-8">
 
-  }
-  return (
-    <main className="mx-auto w-full max-w-5xl bg-slate-50 px-4 py-8">
-      <section className="mx-auto w-full max-w-xl rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-      <h1 className="mb-5 text-4xl font-bold text-slate-950">Change Password</h1>
+                <h1 className="text-3xl font-bold text-white sm:text-4xl">
+                    Change Password
+                </h1>
 
-      {error && <p className="font-semibold text-red-600">{error}</p>}
-      {success && <p className="font-semibold text-emerald-700">{success}</p>}
+                <p className="mt-2 text-gray-400">
+                    Update your account password securely.
+                </p>
 
-      <form className="mt-5 grid gap-4" onSubmit={handleSubmit}>
-        <input type='password'
-          className="min-h-11 rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-base text-slate-950 outline-blue-200 focus:border-blue-600 focus:outline-2"
-          placeholder='Current password'
-          value={currentPassword}
-          onChange={e => setCurrentPassword(e.target.value)}
-          required
-          />
-          <input type='password'
-          className="min-h-11 rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-base text-slate-950 outline-blue-200 focus:border-blue-600 focus:outline-2"
-          placeholder='New Password'
-          value={newPassword}
-          onChange={e => setNewPassword(e.target.value)}
-          required
-          />
-          <input type='password'
-          className="min-h-11 rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-base text-slate-950 outline-blue-200 focus:border-blue-600 focus:outline-2"
-          placeholder='Confirm Password'
-          value={confirmPassword}
-          onChange={e => setConfirmPassword(e.target.value)}
-          required
-          />
-          <div className="flex flex-wrap gap-3">
-            <button className="min-h-10 rounded-md bg-blue-600 px-4 py-2 font-semibold text-white disabled:opacity-60" type='submit' disabled={loading}>{loading ? 'Changing...' : 'Change Password'}</button>
-            <Link className="inline-flex min-h-10 items-center justify-center rounded-md border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-900" to="/account">Cancel</Link>
-          </div>
-      </form>
-      </section>
-    </main>
-  )
+                {error && (
+                    <p className="mt-5 rounded-md border border-red-900 bg-red-950/40 px-4 py-3 text-sm font-medium text-red-400">
+                        {error}
+                    </p>
+                )}
+
+                {success && (
+                    <p className="mt-5 rounded-md border border-emerald-900 bg-emerald-950/40 px-4 py-3 text-sm font-medium text-emerald-400">
+                        {success}
+                    </p>
+                )}
+
+                <form
+                    className="mt-6 grid gap-4"
+                    onSubmit={handleSubmit}
+                >
+                    <label className="grid gap-1.5 text-left text-sm font-medium text-gray-300">
+                        Current Password
+
+                        <input
+                            type="password"
+                            className="min-h-11 rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
+                            placeholder="Enter current password"
+                            value={currentPassword}
+                            onChange={(e) =>
+                                setCurrentPassword(e.target.value)
+                            }
+                            required
+                        />
+                    </label>
+
+                    <label className="grid gap-1.5 text-left text-sm font-medium text-gray-300">
+                        New Password
+
+                        <input
+                            type="password"
+                            className="min-h-11 rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
+                            placeholder="Enter new password"
+                            value={newPassword}
+                            onChange={(e) =>
+                                setNewPassword(e.target.value)
+                            }
+                            required
+                        />
+                    </label>
+
+                    <label className="grid gap-1.5 text-left text-sm font-medium text-gray-300">
+                        Confirm Password
+
+                        <input
+                            type="password"
+                            className="min-h-11 rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
+                            placeholder="Confirm new password"
+                            value={confirmPassword}
+                            onChange={(e) =>
+                                setConfirmPassword(e.target.value)
+                            }
+                            required
+                        />
+                    </label>
+
+                    <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                        <button
+                            className="min-h-11 rounded-full bg-white px-6 py-2 font-semibold text-black transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
+                            type="submit"
+                            disabled={loading}
+                        >
+                            {loading
+                                ? 'Changing...'
+                                : 'Change Password'}
+                        </button>
+
+                        <Link
+                            className="inline-flex min-h-11 items-center justify-center rounded-full border border-gray-600 px-6 py-2 font-semibold text-gray-300 transition hover:border-gray-400 hover:bg-gray-800 hover:text-white"
+                            to="/account"
+                        >
+                            Cancel
+                        </Link>
+                    </div>
+                </form>
+
+            </section>
+        </main>
+    );
 }
 
-export default ChangePassword
+export default ChangePassword;
