@@ -13,6 +13,8 @@ function ChangePassword() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 
     const dispatch = useDispatch();
@@ -110,10 +112,10 @@ function ChangePassword() {
                     <label className="grid gap-1.5 text-left text-sm font-medium text-gray-300">
                         New Password
                         
-                        <div>
+                        <div className='relative'>
                             <input
                             type="password"
-                            className="min-h-11 rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
+                            className="min-h-11 w-full rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
                             placeholder="Enter new password"
                             value={newPassword}
                             onChange={(e) =>
