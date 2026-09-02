@@ -12,6 +12,8 @@ function ChangePassword() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -84,10 +86,10 @@ function ChangePassword() {
                 >
                     <label className="grid gap-1.5 text-left text-sm font-medium text-gray-300">
                         Current Password
-
+                    <div className='relative'>
                         <input
-                            type="password"
-                            className="min-h-11 rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
+                            type={showPassword ? 'text' : 'password'}
+                            className="min-h-11 w-full rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
                             placeholder="Enter current password"
                             value={currentPassword}
                             onChange={(e) =>
@@ -95,12 +97,21 @@ function ChangePassword() {
                             }
                             required
                         />
+
+                        <button 
+                         type='button'
+                         onClick={() => setShowPassword(!showPassword)}
+                         className='absolute right-3 top-3.5 -translate-y-0.5 text-sm text-gray-400 hover:text-white '
+                         >{showPassword ? 'Show' : 'Hide' }</button>
+                    </div>
+                        
                     </label>
 
                     <label className="grid gap-1.5 text-left text-sm font-medium text-gray-300">
                         New Password
-
-                        <input
+                        
+                        <div>
+                            <input
                             type="password"
                             className="min-h-11 rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
                             placeholder="Enter new password"
@@ -110,6 +121,16 @@ function ChangePassword() {
                             }
                             required
                         />
+                             <button 
+                         type='button'
+                         onClick={() => setShowPassword(!showPassword)}
+                         className='absolute right-3 top-3.5 -translate-y-0.5 text-sm text-gray-400 hover:text-white '
+                         >{showPassword ? 'Show' : 'Hide' }</button>
+
+                        
+
+                        </div>
+                        
                     </label>
 
                     <label className="grid gap-1.5 text-left text-sm font-medium text-gray-300">
@@ -129,7 +150,7 @@ function ChangePassword() {
 
                     <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:justify-center">
                         <button
-                            className="min-h-11 rounded-full bg-white px-6 py-2 font-semibold text-black transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="min-h-11 w rounded-full bg-white px-6 py-2 font-semibold text-black transition hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
                             type="submit"
                             disabled={loading}
                         >

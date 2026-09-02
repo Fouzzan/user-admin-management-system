@@ -14,7 +14,9 @@ export const loginUser = createAsyncThunk(
         });
 
         const user = response.data.find((item) => item.password === password);
-
+        console.log('Login response:', response);
+        console.log('Response data:', response.data);
+        console.log('Is array:', Array.isArray(response.data));
         if (!user) {
             throw new Error('Invalid email or password');
         }

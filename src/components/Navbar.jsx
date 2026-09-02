@@ -30,7 +30,7 @@ function Navbar() {
                 {/* Logo */}
                 <Link
                     className="flex shrink-0 items-center gap-3 text-lg font-bold text-white no-underline"
-                    to={isAuthenticated ? '/account' : '/'}
+                    to={isAuthenticated && '/'}
                 >
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-sm text-black">
                         ◉
@@ -108,8 +108,10 @@ function Navbar() {
                 {/* Right Side */}
                 {isAuthenticated && (
                     <div className="flex items-center gap-3">
-
+                            
                         {/* User avatar */}
+                        <Link
+                            to={isAuthenticated ? '/account' : '/'}>
                         <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-blue-950 text-sm font-semibold text-blue-300">
                             {currentUser?.profilePicture ? (
                                 <img
@@ -123,6 +125,7 @@ function Navbar() {
                                     .toUpperCase()
                             )}
                         </div>
+                        </Link>
 
                         {/* Logout */}
                         <button
