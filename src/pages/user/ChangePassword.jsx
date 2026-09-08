@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { changePassword } from '../../features/auth/authSlice';
+import { validatePassword } from '../../utils/userValidation';
 
 function ChangePassword() {
     const [currentPassword, setCurrentPassword] = useState('');
@@ -32,6 +33,12 @@ function ChangePassword() {
 
         if (newPassword !== confirmPassword) {
             setError('Passwords do not match');
+            return;
+        }
+
+        const passwordError = validatePassword(newPassword);
+        if (passwordError) {
+            setError(passwordError);
             return;
         }
 
@@ -102,9 +109,10 @@ function ChangePassword() {
 
                         <button 
                          type='button'
-                         onClick={() => setShowPassword(!showPassword)}
+                         onClick={() => setShowPassword((shown) => !shown)}
                          className='absolute right-3 top-3.5 -translate-y-0.5 text-sm text-gray-400 hover:text-white '
-                         >{showPassword ? 'Show' : 'Hide' }</button>
+                         aria-label={showPassword ? 'Hide current password' : 'Show current password'}
+                         >{showPassword ? 'Hide' : 'Show' }</button>
                     </div>
                         
                     </label>
@@ -114,8 +122,8 @@ function ChangePassword() {
                         
                         <div className='relative'>
                             <input
-                            type="password"
-                            className="min-h-11 w-full rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
+                            type={showNewPassword ? 'text' : 'password'}
+                            className="min-h-11 w-full rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 pr-16 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
                             placeholder="Enter new password"
                             value={newPassword}
                             onChange={(e) =>
@@ -125,9 +133,10 @@ function ChangePassword() {
                         />
                              <button 
                          type='button'
-                         onClick={() => setShowPassword(!showPassword)}
+                         onClick={() => setShowNewPassword((shown) => !shown)}
                          className='absolute right-3 top-3.5 -translate-y-0.5 text-sm text-gray-400 hover:text-white '
-                         >{showPassword ? 'Show' : 'Hide' }</button>
+                         aria-label={showNewPassword ? 'Hide new password' : 'Show new password'}
+                         >{showNewPassword ? 'Hide' : 'Show' }</button>
 
                         
 
@@ -138,16 +147,26 @@ function ChangePassword() {
                     <label className="grid gap-1.5 text-left text-sm font-medium text-gray-300">
                         Confirm Password
 
-                        <input
-                            type="password"
-                            className="min-h-11 rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
-                            placeholder="Confirm new password"
-                            value={confirmPassword}
-                            onChange={(e) =>
-                                setConfirmPassword(e.target.value)
-                            }
-                            required
-                        />
+                        <div className="relative">
+                            <input
+                                type={showConfirmPassword ? 'text' : 'password'}
+                                className="min-h-11 w-full rounded-md border border-gray-600 bg-[#1A1A19] px-3 py-2 pr-16 text-base text-white outline-none placeholder:text-gray-500 focus:border-white focus:ring-1 focus:ring-white"
+                                placeholder="Confirm new password"
+                                value={confirmPassword}
+                                onChange={(e) =>
+                                    setConfirmPassword(e.target.value)
+                                }
+                                required
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword((shown) => !shown)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400 hover:text-white"
+                                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                            >
+                                {showConfirmPassword ? 'Hide' : 'Show'}
+                            </button>
+                        </div>
                     </label>
 
                     <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:justify-center">

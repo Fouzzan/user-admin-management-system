@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,6 +10,7 @@ import {
   fetchUserById,
   updateUserById
 } from '../../features/users/userSlice';
+import { validateUserDetails } from '../../utils/userValidation';
 
 function EditUser() {
   const { id } = useParams();
@@ -21,6 +22,7 @@ function EditUser() {
   const { selectedUser, loading, error } = useSelector(
     (state) => state.users
   );
+  const [formError, setFormError] = useState('');
 
   useEffect(() => {
     dispatch(fetchUserById(id));
@@ -28,23 +30,34 @@ function EditUser() {
 
   function handleSubmit(event) {
     event.preventDefault();
+    setFormError('');
 
     const formData = new FormData(event.currentTarget);
+    const updates = {
+      name: formData.get('name').trim(),
+      email: formData.get('email').trim(),
+      phone: formData.get('phone').trim(),
+      role: formData.get('role'),
+      isActive: formData.has('isActive')
+    };
+    const detailsError = validateUserDetails(updates);
+
+    if (detailsError) {
+      setFormError(detailsError);
+      return;
+    }
 
     dispatch(
       updateUserById({
         id,
-        updates: {
-          name: formData.get('name'),
-          email: formData.get('email'),
-          phone: formData.get('phone'),
-          role: formData.get('role'),
-          isActive: formData.has('isActive')
-        }
+        updates
       })
     )
       .unwrap()
-      .then(() => navigate(`/admin/users/${id}`));
+      .then(() => navigate(`/admin/users/${id}`))
+      .catch(() => {
+        // The request error is shown from Redux state.
+      });
   }
 
   if (loading && !selectedUser) {
@@ -126,9 +139,9 @@ function EditUser() {
           </div>
 
           {/* Error */}
-          {error && (
+          {(formError || error) && (
             <div className="mt-6 rounded-lg border border-red-900 bg-red-950/40 px-4 py-3 text-sm font-medium text-red-400">
-              {error}
+              {formError || error}
             </div>
           )}
 
@@ -173,6 +186,7 @@ function EditUser() {
                     name="phone"
                     defaultValue={selectedUser.phone || ''}
                     placeholder="Enter phone number"
+                    required
                   />
                 </label>
 

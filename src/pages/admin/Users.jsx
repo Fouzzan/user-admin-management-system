@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,6 +11,7 @@ import { deleteUserById, fetchUsers } from '../../features/users/userSlice';
 
 function Users() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { users, loading, error } = useSelector(
     (state) => state.users
@@ -91,6 +93,7 @@ function Users() {
 
           <button
             type="button"
+            onClick={() => navigate('/admin/users/add')}
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#f1f1f1] px-5 py-2 font-semibold text-[#1b1b1b] transition hover:bg-white"
           >
             <span className="text-xl font-normal">+</span>

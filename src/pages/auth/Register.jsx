@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../../features/auth/authSlice';
+import { validatePassword, validateUserDetails } from '../../utils/userValidation';
 
 function Register() {
     const dispatch = useDispatch();
@@ -43,85 +44,13 @@ function Register() {
         event.preventDefault();
 
         setFormError('');
-        //Name Validation
-        const trimmedName = formData.name.trim();
-        if(trimmedName === ''){
-            //show name is required
-            setFormError('Name is required');
-                return;
-        }
-        if(trimmedName.length < 2){
-            //show name should should be greater than 2 chars
-
-            setFormError('Name must be at least 2 characters');
-            return;
-        }
-        if(trimmedName.length > 50){
-            //show name should not be greater than 50 chars
-            setFormError('Name must not exceed 50 characters');
+        const detailsError = validateUserDetails(formData);
+        const passwordError = validatePassword(formData.password);
+        if (detailsError || passwordError) {
+            setFormError(detailsError || passwordError);
             return;
         }
 
-        const namePattern = /^[A-Za-z\s'-]+$/;
-
-        if(!namePattern.test(trimmedName)){
-            setFormError('Name can only contain letters, spaces, hyphens and apostrophes');
-            return;            
-        }
-
-        //Email Validation
-        const trimmedEmail = formData.email.trim();
-        if(trimmedEmail === ''){
-            setFormError('Email is required');
-            return;
-        }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
-    setFormError('Enter a valid email address');
-    return;
-}
-
-        //Phone Validation
-
-        const trimmedPhone = formData.phone.trim();
-
-        if(trimmedPhone === ''){
-            setFormError('Phone is required');
-            return;
-        }
-        if(!/^[0-9]{10}$/.test(trimmedPhone)){
-            setFormError('Phone number must be exactly 10 digits');
-            return;
-        }
-        
-        //password Validation
-        if(formData.password.length < 8){
-            setFormError('Password must be at least 8 characters');
-            return;
-        }
-        if(formData.password.length > 50){
-            setFormError('Password must not exceed 50 characters');
-            return;
-        }
-        if(!/[A-Z]/.test(formData.password)){
-            setFormError('Password must contain atleast one uppercase character');
-            return;
-        }
-         if(!/[a-z]/.test(formData.password)){
-            setFormError('Password must contain atleast one lowercase character');
-            return;
-        }
-         if(!/[0-9]/.test(formData.password)){
-            setFormError('Password must contain atleast one number');
-            return;
-        }
-        if(!/[!@#$%^&*()_\-+=?/<,>.]/.test(formData.password)){
-    setFormError('Password must contain at least one special character');
-    return;
-}
-        if(/\s/.test(formData.password)){
-            setFormError('Password must not contain spaces');
-            return;
-        }
         if (formData.password !== formData.confirmPassword) {
             setFormError('Passwords do not match');
             return;
@@ -129,9 +58,9 @@ function Register() {
   
         dispatch(
             registerUser({
-                name: trimmedName,
-                email: trimmedEmail,
-                phone: trimmedPhone,
+                name: formData.name.trim(),
+                email: formData.email.trim(),
+                phone: formData.phone.trim(),
                 password: formData.password
             })
         );

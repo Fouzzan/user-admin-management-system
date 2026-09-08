@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import { initializeAuth, restoreUser } from './features/auth/authSlice';
 import AdminLogin from './pages/admin/AdminLogin';
+import AddUser from './pages/admin/AddUser';
 import Dashboard from './pages/admin/Dashboard';
 import EditUser from './pages/admin/EditUser';
 import UserDetails from './pages/admin/UserDetails';
@@ -60,6 +61,10 @@ function App() {
         <Route path='/admin/users/:id' element={
           <AdminRoute>
           <UserDetails />
+          </AdminRoute>} />
+        <Route path='/admin/users/add' element={
+          <AdminRoute>
+          <AddUser />
           </AdminRoute>} />
         <Route path='/admin/users/:id/edit' element={
           <AdminRoute>
